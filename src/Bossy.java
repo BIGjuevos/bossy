@@ -1,98 +1,122 @@
 import javax.swing.*;
-import javax.swing.text.DefaultCaret;
-import javax.swing.text.JTextComponent;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+
+import Server.*;
+import Logger.*;
 
 public class Bossy extends JDialog {
+    /**
+     * Silly UI Elements
+     */
     private JPanel contentPane;
-    private JButton quitBossyButton;
-    private JButton startAllEnginesButton;
-    private JButton start1FLButton;
-    private JButton start2FRButton;
-    private JButton start3BLButton;
-    private JButton start4BRButton;
-    private JScrollPane debugWindow;
+    private JButton launchCommandAndControlButton;
+    private JButton launchVirtualInstrumentationButton;
+    private JButton quitButton;
+    private JButton startServerButton;
+    private JButton stopServerButton;
+    private JTextPane debugText;
+    private JScrollPane debugTextScrollPane;
+    private JTextField serverAddressValue;
+    private JTextField clientConnectedValue;
+    private JTextField serverRunningValue;
 
-    private JTextArea ta;
+
+    /**
+     * Status properties
+     */
+    private boolean isServerRunning = false;
+
+    /**
+     * Actual useful things
+     */
+    private Logger logger;
 
     private Server server;
+    private Thread threadServer;
 
     public Bossy() {
+        //create a new logger first and foremost
+        logger = new Logger();
+        logger.setDebugText(debugText);
+        logger.setScrollPane(debugTextScrollPane);
+
+        //shiny new server instance
+        server = new Server(31313);
+        server.setLogger(logger);
+
+        /**
+         * Do all of this silly UI stuff last
+         */
         setContentPane(contentPane);
         setModal(true);
-        quitBossyButton.addActionListener(new ActionListener() {
-            @Override
+
+        /**
+         * quit the applications
+         */
+        quitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                logger.debug("Exiting now");
                 System.exit(0);
             }
         });
-
-        start1FLButton.addActionListener(new ActionListener() {
+        /**
+         * Start the server
+         */
+        startServerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                server.sendMessage("start 1");
+                if ( !isServerRunning ) {
+                    //server isn't running let's start it
+                    server.allowStart();
+                    threadServer = new Thread(server);
+                    threadServer.start();
+
+                    serverRunningValue.setText("Yes");
+                    serverAddressValue.setText(server.getAddress());
+
+                    isServerRunning = true;
+                    startServerButton.setEnabled(false);
+                    stopServerButton.setEnabled(true);
+                }
             }
         });
-        start2FRButton.addActionListener(new ActionListener() {
+        /**
+         * Stop the server
+         */
+        stopServerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                server.sendMessage("start 2");
+                if ( isServerRunning ) {
+                    //server isn't running let's start it
+                    server.requestStop();
+
+                    //wait for the thread to exit
+                    try {
+                        if ( !threadServer.isInterrupted() && threadServer.isAlive() ) {
+                            threadServer.join();
+                        }
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+
+                    serverRunningValue.setText("No");
+                    serverAddressValue.setText("N/A");
+
+                    isServerRunning = false;
+                    startServerButton.setEnabled(true);
+                    stopServerButton.setEnabled(false);
+                }
             }
         });
-        start3BLButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                server.sendMessage("start 3");
-            }
-        });
-        start4BRButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                server.sendMessage("start 4");
-            }
-        });
-        startAllEnginesButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                server.sendMessage("start 1");
-                server.sendMessage("start 2");
-                server.sendMessage("start 3");
-                server.sendMessage("start 4");
-            }
-        });
-    }
-
-    public void debugMessage(String message) {
-        if ( this.ta == null ) {
-            this.ta = new JTextArea();
-
-            DefaultCaret caret = (DefaultCaret)this.ta.getCaret();
-            caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-
-            this.debugWindow.setViewportView(this.ta);
-        }
-        this.ta.append(message + "\n");
-    }
-
-    public void setServer(Server server) {
-        this.server = server;
     }
 
     public static void main(String[] args) {
-        //init the dialog
+        //init the main bossy screen
         Bossy dialog = new Bossy();
-
-        //start the server
-        Server server = new Server();
-        server.setDialog(dialog);
-        Thread t = new Thread( server );
-        t.start();
-
-        dialog.setServer(server);
-
+        dialog.setTitle("Bossy: Drone Command and Control System");
         dialog.pack();
         dialog.setVisible(true);
 
