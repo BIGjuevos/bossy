@@ -1,5 +1,7 @@
 package Server;
 
+import Client.Client;
+import Information.Engine;
 import Logger.*;
 
 import java.io.IOException;
@@ -21,6 +23,9 @@ public class Server extends Logish implements Runnable {
      * Internal operations stuff
      */
     private boolean keepRunning = true; //our quit flag in the event a stop is requested
+    private Client client;
+    private InetAddress clientInetAddress;
+    private Engine engineInformation;
 
     /**
      * Our wonderful constructor
@@ -56,6 +61,10 @@ public class Server extends Logish implements Runnable {
         return socket.getLocalSocketAddress().toString();
     }
 
+    public InetAddress getClientInetAddress() {
+        return this.clientInetAddress;
+    }
+
     /**
      * Request a stop on the server
      */
@@ -73,7 +82,6 @@ public class Server extends Logish implements Runnable {
             sendData = sentence.getBytes();
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
             clientSocket.send(sendPacket);
-
         } catch (SocketException e) {
             e.printStackTrace();
         } catch (UnknownHostException e) {
@@ -99,21 +107,30 @@ public class Server extends Logish implements Runnable {
 
         //set up some buffer for ourselves
         byte[] recvData = new byte[64];
-        byte[] sendData = new byte[64];
 
         logger.debug("About to enter server control loop");
         //we have a socket, we should do something with the socket
         while ( keepRunning ) {
             try {
+                recvData = new byte[64];
                 DatagramPacket recvPacket = new DatagramPacket(recvData, recvData.length);
                 socket.receive(recvPacket);
+                this.clientInetAddress = recvPacket.getAddress();
 
                 String sentence = new String( recvPacket.getData() );
+                sentence = sentence.trim(); //take off the padding crap from the byte array
 
-                sentence = sentence.trim();
+                /**
+                 * take the inbound sentence, give it to a new request thread, and send it on its merry way
+                 * The request object if need be can send off a response to the client
+                 */
+                Request req = new Request();
+                req.setLogger(logger);
+                req.handle(sentence, this);
 
-                //we have a command, we should do something with the command
-                logger.debug("Server got message: " + sentence);
+                if  ( req.hasResponse() ) {
+                    this.client.send(req.getResponse());
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 //drop out of the while loop
@@ -130,5 +147,17 @@ public class Server extends Logish implements Runnable {
             e.printStackTrace();
             logger.debug("Problem stopping socket");
         }
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public void setEngineInformation(Engine engineInformation) {
+        this.engineInformation = engineInformation;
+    }
+
+    public Engine getEngineInformation() {
+        return engineInformation;
     }
 }

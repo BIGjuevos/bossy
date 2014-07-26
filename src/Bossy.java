@@ -2,10 +2,12 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import Information.*;
 import Server.*;
 import Logger.*;
+import Client.*;
 
-public class Bossy extends JDialog {
+public class Bossy extends JFrame {
     /**
      * Silly UI Elements
      */
@@ -28,31 +30,47 @@ public class Bossy extends JDialog {
     private boolean isServerRunning = false;
 
     /**
-     * Actual useful things
+     * Useful things
      */
     private Logger logger;
 
     private Server server;
     private Thread threadServer;
 
+    private Client client;
+    private Thread threadClient;
+
+    /**
+     * Information about the drone
+     */
+    private Engine engineInformation;
+
     public Bossy() {
         //create a new logger first and foremost
-        logger = new Logger();
-        logger.setDebugText(debugText);
-        logger.setScrollPane(debugTextScrollPane);
+        this.logger = new Logger();
+        this.logger.setDebugText(debugText);
+        this.logger.setScrollPane(debugTextScrollPane);
+
+        //create the client (to send stuff to a client)
+        this.client = new Client();
+        this.client.setLogger(logger);
+
+        //create the engine information
+        this.engineInformation = new Engine();
 
         //shiny new server instance
-        server = new Server(31313);
-        server.setLogger(logger);
+        this.server = new Server(31313);
+        this.server.setLogger(this.logger);
+        this.server.setClient(this.client);
+        this.server.setEngineInformation(this.engineInformation);
 
         /**
          * Do all of this silly UI stuff last
          */
         setContentPane(contentPane);
-        setModal(true);
 
         /**
-         * quit the applications
+         * Quit the applications
          */
         quitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -69,6 +87,7 @@ public class Bossy extends JDialog {
                 if ( !isServerRunning ) {
                     //server isn't running let's start it
                     server.allowStart();
+                    client.setServer(server);
                     threadServer = new Thread(server);
                     threadServer.start();
 
@@ -111,15 +130,48 @@ public class Bossy extends JDialog {
                 }
             }
         });
+        /**
+         * Launch the command and control window
+         */
+        launchCommandAndControlButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if ( isServerRunning ) {
+                    CommandControl dialog = new CommandControl();
+                    dialog.setClient(client);
+
+                    dialog.setTitle("Command & Control");
+                    dialog.pack();
+                    dialog.setVisible(true);
+                } else {
+                    System.out.println("Server must be running first");
+                }
+            }
+        });
+        launchVirtualInstrumentationButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if ( isServerRunning ) {
+                    Instruments dialog = new Instruments();
+
+                    dialog.setClient(client);
+
+                    dialog.setTitle("Virtual Instrument Panel");
+                    dialog.pack();
+                    dialog.setVisible(true);
+                } else {
+                    System.out.println("Server must be running first");
+                }
+            }
+        });
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         //init the main bossy screen
         Bossy dialog = new Bossy();
-        dialog.setTitle("Bossy: Drone Command and Control System");
+        dialog.setTitle("Bossy: Open Source Quad-Copter Control System");
+        dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         dialog.pack();
         dialog.setVisible(true);
-
-        System.exit(0);
     }
 }

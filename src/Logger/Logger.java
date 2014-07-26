@@ -23,7 +23,7 @@ public class Logger {
         java.util.Date date = new java.util.Date();
         String leader = "" + new Timestamp(date.getTime());
 
-        leader = String.format("%1$-" + 26 + "s", leader);
+        leader = String.format("%1$-" + 24 + "s", leader);
 
         str = leader + str + "\n";
 
