@@ -3,6 +3,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import Information.*;
+import Interface.CommandControl;
+import Interface.Instruments;
 import Server.*;
 import Logger.*;
 import Client.*;
@@ -58,7 +60,7 @@ public class Bossy extends JFrame {
         //create the engine information
         this.engineInformation = new Engine();
 
-        //shiny new server instance
+        //shiny new server instance (how we get information from the client)
         this.server = new Server(31313);
         this.server.setLogger(this.logger);
         this.server.setClient(this.client);
@@ -139,6 +141,10 @@ public class Bossy extends JFrame {
                 if ( isServerRunning ) {
                     CommandControl dialog = new CommandControl();
                     dialog.setClient(client);
+
+                    dialog.setEngineInformation(engineInformation);
+
+                    engineInformation.setCcDialog(dialog);
 
                     dialog.setTitle("Command & Control");
                     dialog.pack();

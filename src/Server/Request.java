@@ -13,6 +13,8 @@ public class Request extends Logish {
     protected String response = "";
     protected Server server;
 
+    private Engine engineInformation;
+
     public void handle(String message, Server server) {
         this.server = server;
         if ( message.substring(0, 5).equals("hello") ) {
@@ -67,5 +69,13 @@ public class Request extends Logish {
 
     public int getType() {
         return this.type;
+    }
+
+    public Engine getEngineInformation() {
+        return engineInformation;
+    }
+
+    public void setEngineInformation(Engine engineInformation) {
+        this.engineInformation = engineInformation;
     }
 }

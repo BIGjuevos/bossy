@@ -1,3 +1,5 @@
+package Interface;
+
 import Client.*;
 
 import javax.swing.*;
