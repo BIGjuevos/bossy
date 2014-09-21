@@ -34,22 +34,43 @@ public class Request extends Logish {
 
             String[] parts = message.split(" ");
             int engine = Integer.parseInt(parts[1]);
-            int throttle = Integer.parseInt(parts[2]);
 
-            //update the specific engine
-            switch (engine) {
-                case 0:
-                    e.setFrontLeftThrottle(throttle);
-                    break;
-                case 1:
-                    e.setFrontRightThrottle(throttle);
-                    break;
-                case 2:
-                    e.setBackLeftThrottle(throttle);
-                    break;
-                case 3:
-                    e.setBackRightThrottle(throttle);
-                    break;
+            if ( message.substring(0,3).equals("E T") ) {
+                int throttle = Integer.parseInt(parts[2]);
+
+                //update the specific engine
+                switch (engine) {
+                    case 0:
+                        e.setFrontLeftThrottle(throttle);
+                        break;
+                    case 1:
+                        e.setFrontRightThrottle(throttle);
+                        break;
+                    case 2:
+                        e.setBackLeftThrottle(throttle);
+                        break;
+                    case 3:
+                        e.setBackRightThrottle(throttle);
+                        break;
+                }
+            } else if ( message.substring(0,3).equals("E R") ) {
+                int trim = Integer.parseInt(parts[2]);
+
+                //update the specific engine
+                switch (engine) {
+                    case 0:
+                        e.setFrontLeftTrim(trim);
+                        break;
+                    case 1:
+                        e.setFrontRightTrim(trim);
+                        break;
+                    case 2:
+                        e.setBackLeftTrim(trim);
+                        break;
+                    case 3:
+                        e.setBackRightTrim(trim);
+                        break;
+                }
             }
         } else {
             /**

@@ -32,6 +32,18 @@ public class CommandControl extends JFrame {
     private JButton FlDownButton;
     private JButton AllUpButton;
     private JButton AllDownButton;
+    private JButton FrTrUpButton;
+    private JButton FrTrDownButton;
+    private JButton BlTrUpButton;
+    private JButton BlTrDownButton;
+    private JButton BrTrUpButton;
+    private JButton BrTrDownButton;
+    private JTextField trim1;
+    private JTextField trim2;
+    private JTextField trim3;
+    private JTextField trim4;
+    private JButton FlTrUpButton;
+    private JButton FlTrDownButton;
 
     private Client client;
     private Engine engineInformation;
@@ -189,5 +201,21 @@ public class CommandControl extends JFrame {
 
     public JTextField getThrottle4() {
         return throttle4;
+    }
+
+    public JTextField getTrim4() {
+        return trim4;
+    }
+
+    public JTextField getTrim3() {
+        return trim3;
+    }
+
+    public JTextField getTrim2() {
+        return trim2;
+    }
+
+    public JTextField getTrim1() {
+        return trim1;
     }
 }

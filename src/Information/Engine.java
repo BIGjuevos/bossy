@@ -8,6 +8,11 @@ public class Engine {
     private int backLeftThrottle;
     private int backRightThrottle;
 
+    private int frontLeftTrim;
+    private int frontRightTrim;
+    private int backLeftTrim;
+    private int backRightTrim;
+
     private CommandControl ccDialog;
 
     public int getFrontLeftThrottle() {
@@ -55,6 +60,54 @@ public class Engine {
 
         if ( ccDialog != null ) {
             ccDialog.getThrottle4().setText( Integer.toString(backRightThrottle) );
+        }
+    }
+
+    public int getFrontLeftTrim() {
+        return frontLeftTrim;
+    }
+
+    public void setFrontLeftTrim(int frontLeftTrim) {
+        this.frontLeftTrim = frontLeftTrim;
+
+        if ( ccDialog != null ) {
+            ccDialog.getTrim1().setText( Integer.toString(frontLeftTrim) );
+        }
+    }
+
+    public int getFrontRightTrim() {
+        return frontRightTrim;
+    }
+
+    public void setFrontRightTrim(int frontRightTrim) {
+        this.frontRightTrim = frontRightTrim;
+
+        if ( ccDialog != null ) {
+            ccDialog.getTrim2().setText( Integer.toString(frontRightTrim) );
+        }
+    }
+
+    public int getBackLeftTrim() {
+        return backLeftTrim;
+    }
+
+    public void setBackLeftTrim(int backLeftTrim) {
+        this.backLeftTrim = backLeftTrim;
+
+        if ( ccDialog != null ) {
+            ccDialog.getTrim3().setText( Integer.toString(backLeftTrim) );
+        }
+    }
+
+    public int getBackRightTrim() {
+        return backRightTrim;
+    }
+
+    public void setBackRightTrim(int backRightTrim) {
+        this.backRightTrim = backRightTrim;
+
+        if ( ccDialog != null ) {
+            ccDialog.getTrim4().setText( Integer.toString(backRightTrim) );
         }
     }
 
