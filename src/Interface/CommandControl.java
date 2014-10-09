@@ -44,6 +44,8 @@ public class CommandControl extends JFrame {
     private JTextField trim4;
     private JButton FlTrUpButton;
     private JButton FlTrDownButton;
+    private JButton AllUp10Button;
+    private JButton AllDown10Button;
 
     private Client client;
     private Engine engineInformation;
@@ -175,6 +177,72 @@ public class CommandControl extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 client.send("E T 3 " + (engineInformation.getBackRightThrottle() - 1) );
+            }
+        });
+        FlTrUpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                client.send("E R 0 " + (engineInformation.getFrontLeftTrim() + 1) );
+            }
+        });
+        FlTrDownButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                client.send("E R 0 " + (engineInformation.getFrontLeftTrim() - 1) );
+            }
+        });
+        FrTrUpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                client.send("E R 1 " + (engineInformation.getFrontRightTrim() + 1) );
+            }
+        });
+        FrTrDownButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                client.send("E R 1 " + (engineInformation.getFrontRightTrim() - 1) );
+            }
+        });
+        BlTrUpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                client.send("E R 2 " + (engineInformation.getBackLeftTrim() + 1) );
+            }
+        });
+        BlTrDownButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                client.send("E R 2 " + (engineInformation.getBackLeftTrim() - 1) );
+            }
+        });
+        BrTrUpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                client.send("E R 3 " + (engineInformation.getBackRightTrim() + 1) );
+            }
+        });
+        BrTrDownButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                client.send("E R 3 " + (engineInformation.getBackRightTrim() - 1) );
+            }
+        });
+        AllUp10Button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                client.send("E T 0 " + (engineInformation.getFrontLeftThrottle() + 10) );
+                client.send("E T 1 " + (engineInformation.getFrontRightThrottle() + 10) );
+                client.send("E T 2 " + (engineInformation.getBackLeftThrottle() + 10) );
+                client.send("E T 3 " + (engineInformation.getBackRightThrottle() + 10) );
+            }
+        });
+        AllDown10Button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                client.send("E T 0 " + (engineInformation.getFrontLeftThrottle() - 10) );
+                client.send("E T 1 " + (engineInformation.getFrontRightThrottle() - 10) );
+                client.send("E T 2 " + (engineInformation.getBackLeftThrottle() - 10) );
+                client.send("E T 3 " + (engineInformation.getBackRightThrottle() - 10) );
             }
         });
     }

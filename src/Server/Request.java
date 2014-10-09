@@ -33,10 +33,10 @@ public class Request extends Logish {
             Engine e = this.server.getEngineInformation();
 
             String[] parts = message.split(" ");
-            int engine = Integer.parseInt(parts[1]);
+            int engine = Integer.parseInt(parts[2]);
 
             if ( message.substring(0,3).equals("E T") ) {
-                int throttle = Integer.parseInt(parts[2]);
+                int throttle = Integer.parseInt(parts[3]);
 
                 //update the specific engine
                 switch (engine) {
@@ -54,7 +54,7 @@ public class Request extends Logish {
                         break;
                 }
             } else if ( message.substring(0,3).equals("E R") ) {
-                int trim = Integer.parseInt(parts[2]);
+                int trim = Integer.parseInt(parts[3]);
 
                 //update the specific engine
                 switch (engine) {
